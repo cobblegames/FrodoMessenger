@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+  MultiMicroBlogger — Threads sign-in bridge page.
+
+  Meta's OAuth only redirects to https URLs, so this tiny static page
+  receives the Threads authorization response and immediately forwards it
+  into the MultiMicroBlogger app via its custom scheme.
+
+  How to deploy (GitHub Pages, free):
+  1. Create a GitHub account (if needed) and a public repository
+     (e.g. "mmb-bridge").
+  2. Upload this file as index.html (or any name, e.g. threads.html).
+  3. Repository Settings -> Pages -> Branch: main / (root) -> Save.
+  4. Your bridge URL becomes:
+       https://<your-username>.github.io/<repo-name>/index.html
+     Wait ~1 minute for Pages to build.
+  5. In developers.facebook.com -> your Meta app -> Threads use case ->
+     Settings: paste that URL (exactly, including https://) into
+     "Redirect URI" and save.
+  6. In the app: Accounts -> Add account -> Threads -> paste Threads App ID,
+     Threads App Secret and this bridge URL -> Sign in with browser.
+
+  This page forwards ONLY the OAuth response parameters to the app; it
+  stores nothing and calls no server.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MultiMicroBlogger — returning to app…</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f4f4f5;
+           display: grid; place-items: center; height: 100vh; margin: 0; }
+    .card { background: #fff; padding: 2rem 2.5rem; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Returning to MultiMicroBlogger…</h2>
+    <p>If nothing happens, <a id="applink">tap here to continue</a>.</p>
+  </div>
+  <script>
+    (function () {
+      var params = window.location.search || '';
+      // Forward code/state (success) or error parameters (cancel/failure)
+      // unchanged into the app's custom scheme.
+      var target = 'multimikroblogger://threads/callback' + params;
+      var link = document.getElementById('applink');
+      link.href = target;
+      window.location.replace(target);
+    })();
+  </script>
+</body>
+</html>
